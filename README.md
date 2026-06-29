@@ -64,26 +64,27 @@ Settings persist to `UserDefaults` under the key `VremenaSettings` as JSON.
 
 ## Website
 
-The landing page lives in [`site/`](site/) and deploys via GitHub Pages
-(`.github/workflows/pages.yml`). It is currently live at
-**https://jasonhuber.github.io/vremena/**.
+The landing page lives in [`site/`](site/).
 
-### Pointing vremena.app at it
+**Primary:** hosted on Hostinger at **https://vremena.app** (Cloudflare in front),
+deployed with:
 
-`vremena.app` is on Cloudflare but not yet aimed at GitHub Pages. To serve the
-site at the custom domain:
+```bash
+./Scripts/deploy_site.sh   # reads Hostinger creds from project-root .env (gitignored)
+```
 
-1. In Cloudflare DNS for `vremena.app`, add (DNS-only / grey cloud, not proxied,
-   so GitHub can issue the TLS cert):
-   - `CNAME  www  jasonhuber.github.io`
-   - For the apex, either a `CNAME`/flattened record to `jasonhuber.github.io`,
-     or A records to GitHub Pages: `185.199.108.153`, `.109.153`, `.110.153`, `.111.153`.
-2. Re-add a `site/CNAME` file containing `vremena.app` and push (or set the
-   custom domain under repo **Settings → Pages**).
-3. Wait for GitHub to verify the domain and provision HTTPS.
+This rsyncs `site/` to `~/domains/vremena.app/public_html`, matching the other
+Sustav apps. The `.env` mirrors the `HOSTINGER_SSH_*` keys used elsewhere plus
+`DEPLOY_PATH`.
 
-Alternatively, deploy `site/` to existing Hostinger hosting and leave Cloudflare
-as-is.
+> **One-time SSL step:** a new Hostinger domain has no origin TLS cert until it's
+> issued, so Cloudflare (Full/strict) returns **525** until then. Install the free
+> SSL for `vremena.app` in hPanel (Websites → vremena.app → Security → SSL), or
+> temporarily set Cloudflare SSL to *Flexible*. The existing siblings all have
+> Let's Encrypt origin certs.
+
+**Mirror:** also auto-deploys to GitHub Pages
+(`.github/workflows/pages.yml`) at https://jasonhuber.github.io/vremena/.
 
 ## License
 
