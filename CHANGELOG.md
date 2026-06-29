@@ -3,6 +3,16 @@
 All notable changes to Vremena are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [1.0.1] — 2026-06-29
+
+### Fixed
+- Enforce a single running instance. Previously, a second copy of Vremena
+  (e.g. one in `/Applications` and one in `Downloads`) would add its own menu
+  bar item with independent state, so edits made in one wouldn't appear in the
+  other and the last to quit would overwrite the saved settings. A duplicate
+  launch now activates the existing instance and exits. The in-app edit → menu
+  bar update path was already correct.
+
 ## [1.0.0] — 2026-06-29
 
 ### Added
