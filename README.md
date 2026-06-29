@@ -63,13 +63,13 @@ The default build is ad-hoc signed — fine locally, but other Macs show
 #    → Manage Certificates → +  (requires the paid Apple Developer Program).
 # 2. Store notarization credentials once (app-specific password from appleid.apple.com):
 xcrun notarytool store-credentials "vremena-notary" \
-  --apple-id "<your-apple-id>" --team-id PZB47EEJUG --password "<app-specific-password>"
+  --apple-id "<your-apple-id>" --team-id 4PP234HMPG --password "<app-specific-password>"
 ```
 
 Then build a notarized DMG:
 
 ```bash
-export SIGN_IDENTITY="Developer ID Application: JASON JOHN HUBER (PZB47EEJUG)"
+export SIGN_IDENTITY="Developer ID Application: Sustav LC (4PP234HMPG)"
 export NOTARY_PROFILE="vremena-notary"
 VERSION=1.0.1 ./Scripts/package_app.sh   # signs the .app (hardened runtime)
 VERSION=1.0.1 ./Scripts/make_dmg.sh      # signs + notarizes + staples the DMG

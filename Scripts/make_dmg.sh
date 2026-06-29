@@ -37,7 +37,7 @@ rm -rf "$STAGE"
 
 # --- Sign + notarize ---------------------------------------------------------
 # For a Gatekeeper-clean download set BOTH:
-#   SIGN_IDENTITY="Developer ID Application: JASON JOHN HUBER (PZB47EEJUG)"
+#   SIGN_IDENTITY="Developer ID Application: Sustav LC (4PP234HMPG)"
 #   NOTARY_PROFILE="vremena-notary"   (from: xcrun notarytool store-credentials)
 # package_app.sh must have signed the .app with the same Developer ID first.
 if [[ -n "${SIGN_IDENTITY:-}" ]]; then

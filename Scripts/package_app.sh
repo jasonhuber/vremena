@@ -67,7 +67,7 @@ PLIST
 
 # --- Code signature ----------------------------------------------------------
 # Set SIGN_IDENTITY to a Developer ID for a distributable, notarizable build:
-#   SIGN_IDENTITY="Developer ID Application: JASON JOHN HUBER (PZB47EEJUG)"
+#   SIGN_IDENTITY="Developer ID Application: Sustav LC (4PP234HMPG)"
 # Otherwise the app is ad-hoc signed (runs locally, but Gatekeeper blocks others).
 if [[ -n "${SIGN_IDENTITY:-}" ]]; then
   echo "==> Signing with Developer ID (hardened runtime)"
