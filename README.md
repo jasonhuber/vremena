@@ -64,9 +64,26 @@ Settings persist to `UserDefaults` under the key `VremenaSettings` as JSON.
 
 ## Website
 
-The landing page for [vremena.app](https://vremena.app) lives in [`site/`](site/)
-and deploys via GitHub Pages (see `.github/workflows/pages.yml`). The `CNAME`
-file points the Pages site at the custom domain.
+The landing page lives in [`site/`](site/) and deploys via GitHub Pages
+(`.github/workflows/pages.yml`). It is currently live at
+**https://jasonhuber.github.io/vremena/**.
+
+### Pointing vremena.app at it
+
+`vremena.app` is on Cloudflare but not yet aimed at GitHub Pages. To serve the
+site at the custom domain:
+
+1. In Cloudflare DNS for `vremena.app`, add (DNS-only / grey cloud, not proxied,
+   so GitHub can issue the TLS cert):
+   - `CNAME  www  jasonhuber.github.io`
+   - For the apex, either a `CNAME`/flattened record to `jasonhuber.github.io`,
+     or A records to GitHub Pages: `185.199.108.153`, `.109.153`, `.110.153`, `.111.153`.
+2. Re-add a `site/CNAME` file containing `vremena.app` and push (or set the
+   custom domain under repo **Settings → Pages**).
+3. Wait for GitHub to verify the domain and provision HTTPS.
+
+Alternatively, deploy `site/` to existing Hostinger hosting and leave Cloudflare
+as-is.
 
 ## License
 
