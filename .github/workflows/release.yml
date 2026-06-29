@@ -28,15 +28,25 @@ jobs:
           cd build
           ditto -c -k --keepParent Vremena.app Vremena.zip
 
+      - name: Build DMG
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          [ -z "$VERSION" ] && VERSION="dev"
+          VERSION="$VERSION" ./Scripts/make_dmg.sh
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: Vremena
-          path: build/Vremena.zip
+          path: |
+            build/Vremena.zip
+            build/Vremena-*.dmg
 
       - name: Attach to release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          files: build/Vremena.zip
+          files: |
+            build/Vremena.zip
+            build/Vremena-*.dmg
           generate_release_notes: true
