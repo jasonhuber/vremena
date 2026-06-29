@@ -52,6 +52,31 @@ open build/Vremena.app
 `Scripts/make_icon.swift` regenerates `Resources/icon_1024.png` if you want to
 tweak the icon.
 
+### Signed, notarized release (no Gatekeeper warning)
+
+The default build is ad-hoc signed — fine locally, but other Macs show
+"Apple cannot verify the developer." For a distributable build, sign with a
+**Developer ID Application** certificate and notarize with Apple. One-time setup:
+
+```bash
+# 1. Create a "Developer ID Application" cert in Xcode → Settings → Accounts
+#    → Manage Certificates → +  (requires the paid Apple Developer Program).
+# 2. Store notarization credentials once (app-specific password from appleid.apple.com):
+xcrun notarytool store-credentials "vremena-notary" \
+  --apple-id "<your-apple-id>" --team-id PZB47EEJUG --password "<app-specific-password>"
+```
+
+Then build a notarized DMG:
+
+```bash
+export SIGN_IDENTITY="Developer ID Application: JASON JOHN HUBER (PZB47EEJUG)"
+export NOTARY_PROFILE="vremena-notary"
+VERSION=1.0.1 ./Scripts/package_app.sh   # signs the .app (hardened runtime)
+VERSION=1.0.1 ./Scripts/make_dmg.sh      # signs + notarizes + staples the DMG
+```
+
+Without these env vars both scripts fall back to ad-hoc signing.
+
 ## Architecture
 
 | Target | Role |

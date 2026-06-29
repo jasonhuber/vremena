@@ -65,10 +65,21 @@ cat > "$CONTENTS/Info.plist" <<PLIST
 </plist>
 PLIST
 
-# --- Ad-hoc code signature (so Gatekeeper/launch services are happy locally) -
-echo "==> Ad-hoc signing"
-codesign --force --deep --sign - "$APP" >/dev/null 2>&1 || \
-  echo "   (codesign skipped — bundle still runs locally)"
+# --- Code signature ----------------------------------------------------------
+# Set SIGN_IDENTITY to a Developer ID for a distributable, notarizable build:
+#   SIGN_IDENTITY="Developer ID Application: JASON JOHN HUBER (PZB47EEJUG)"
+# Otherwise the app is ad-hoc signed (runs locally, but Gatekeeper blocks others).
+if [[ -n "${SIGN_IDENTITY:-}" ]]; then
+  echo "==> Signing with Developer ID (hardened runtime)"
+  # Hardened runtime + secure timestamp are required for notarization.
+  codesign --force --deep --options runtime --timestamp \
+    --sign "$SIGN_IDENTITY" "$APP"
+  codesign --verify --deep --strict --verbose=2 "$APP"
+else
+  echo "==> Ad-hoc signing (set SIGN_IDENTITY for a distributable build)"
+  codesign --force --deep --sign - "$APP" >/dev/null 2>&1 || \
+    echo "   (codesign skipped — bundle still runs locally)"
+fi
 
 echo "==> Done: $APP"
 echo "    Run it with:  open \"$APP\""

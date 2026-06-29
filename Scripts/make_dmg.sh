@@ -35,8 +35,27 @@ hdiutil create \
 
 rm -rf "$STAGE"
 
-echo "==> Ad-hoc signing DMG"
-codesign --force --sign - "$DMG" >/dev/null 2>&1 || echo "   (codesign skipped)"
+# --- Sign + notarize ---------------------------------------------------------
+# For a Gatekeeper-clean download set BOTH:
+#   SIGN_IDENTITY="Developer ID Application: JASON JOHN HUBER (PZB47EEJUG)"
+#   NOTARY_PROFILE="vremena-notary"   (from: xcrun notarytool store-credentials)
+# package_app.sh must have signed the .app with the same Developer ID first.
+if [[ -n "${SIGN_IDENTITY:-}" ]]; then
+  echo "==> Signing DMG with Developer ID"
+  codesign --force --timestamp --sign "$SIGN_IDENTITY" "$DMG"
+else
+  echo "==> Ad-hoc signing DMG (set SIGN_IDENTITY for distribution)"
+  codesign --force --sign - "$DMG" >/dev/null 2>&1 || echo "   (codesign skipped)"
+fi
+
+if [[ -n "${NOTARY_PROFILE:-}" ]]; then
+  echo "==> Submitting to Apple notary (this can take a few minutes)"
+  xcrun notarytool submit "$DMG" --keychain-profile "$NOTARY_PROFILE" --wait
+  echo "==> Stapling notarization ticket"
+  xcrun stapler staple "$DMG"
+  xcrun stapler validate "$DMG"
+  spctl -a -t open --context context:primary-signature -v "$DMG" || true
+fi
 
 SIZE="$(du -h "$DMG" | cut -f1)"
 echo "==> Done: $DMG ($SIZE)"
